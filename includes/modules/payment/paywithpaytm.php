@@ -97,7 +97,7 @@ require(dirname(__FILE__) . DIRECTORY_SEPARATOR . '../../encdec_paytm.php');
 				"EMAIL" => $order->customer['email_address'],
 				"MOBILE_NO" => $order->customer['telephone'],
 				"CHANNEL_ID" => "WEB",
-				"TXN_AMOUNT" => $amount,
+				"TXN_AMOUNT" => $amount
 			);
 			
 			if(stripos($callback_enabled,"yes") !== false){
@@ -120,25 +120,38 @@ require(dirname(__FILE__) . DIRECTORY_SEPARATOR . '../../encdec_paytm.php');
     }
 
     function before_process() {
-
-			
-			$merchant_key =html_entity_decode(MODULE_PAYMENT_PAYTM_MERCHANT_KEY);
-			$paramList = $_POST;
+		
+			$merchant_key =html_entity_decode(MODULE_PAYMENT_PAYTM_MERCHANT_KEY);			
+			$paramList = $_POST;			
 			$paytmChecksum = isset($_POST["CHECKSUMHASH"]) ? $_POST["CHECKSUMHASH"] : ""; 
-      $isValidChecksum = verifychecksum_e($paramList, $merchant_key, $paytmChecksum); 
+			$isValidChecksum = verifychecksum_e($paramList, $merchant_key, $paytmChecksum);
 			$resp_code = isset($_POST["RESPCODE"]) ? $_POST["RESPCODE"] : ""; 
-			
 			if($isValidChecksum){
 				if( $resp_code != "01"){	
 					zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, 'error_message=' . urlencode("Your payment was not processed. Please try again...!"), 'SSL', true, false));
 				}
-			}else{				
+			}else{	
 				zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, 'error_message=' . urlencode("Security error...!"), 'SSL', true, false));
 			}
     }
 
     function after_process() {
-      global $insert_id;
+		
+		// Create an array having all required parameters for status query.
+		$requestParamList = array("MID" => MODULE_PAYMENT_PAYTM_MERCHANT_ID , "ORDERID" => $_POST['ORDERID']);
+		
+		$mod = MODULE_PAYMENT_PAYTM_MODE;
+		
+		if($mod == "Test"){
+			$check_status_url = 'https://pguat.paytm.com/oltp/HANDLER_INTERNAL/TXNSTATUS';
+		}else{
+			$check_status_url = 'https://secure.paytm.in/oltp/HANDLER_INTERNAL/TXNSTATUS';
+		}
+		
+		$responseParamList = callAPI($check_status_url, $requestParamList);
+		if($responseParamList['STATUS']=='TXN_SUCCESS' && $responseParamList['TXNAMOUNT']==$_POST['TXNAMOUNT'])
+		{
+			global $insert_id;
 			$status_comment=array();
 			if(isset($_POST)){
 				if(isset($_POST['ORDERID'])){
@@ -157,7 +170,11 @@ require(dirname(__FILE__) . DIRECTORY_SEPARATOR . '../../encdec_paytm.php');
                               'customer_notified' => '0',
                               'comments' => implode("\n", $status_comment));
 
-      zen_db_perform(TABLE_ORDERS_STATUS_HISTORY, $sql_data_array);
+			zen_db_perform(TABLE_ORDERS_STATUS_HISTORY, $sql_data_array);
+		}
+		else{
+			zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, 'error_message=' . urlencode("Security error...!"), 'SSL', true, false));
+		}
     }
 
     function get_error() {
