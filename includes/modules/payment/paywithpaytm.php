@@ -140,15 +140,19 @@ require(dirname(__FILE__) . DIRECTORY_SEPARATOR . '../../encdec_paytm.php');
 		// Create an array having all required parameters for status query.
 		$requestParamList = array("MID" => MODULE_PAYMENT_PAYTM_MERCHANT_ID , "ORDERID" => $_POST['ORDERID']);
 		
+		$StatusCheckSum = getChecksumFromArray($requestParamList, $merchant_key);
+							
+		$requestParamList['CHECKSUMHASH'] = $StatusCheckSum;
+		
 		$mod = MODULE_PAYMENT_PAYTM_MODE;
 		
 		if($mod == "Test"){
-			$check_status_url = 'https://pguat.paytm.com/oltp/HANDLER_INTERNAL/TXNSTATUS';
+			$check_status_url = 'https://pguat.paytm.com/oltp/HANDLER_INTERNAL/getTxnStatus';
 		}else{
-			$check_status_url = 'https://secure.paytm.in/oltp/HANDLER_INTERNAL/TXNSTATUS';
+			$check_status_url = 'https://secure.paytm.in/oltp/HANDLER_INTERNAL/getTxnStatus';
 		}
 		
-		$responseParamList = callAPI($check_status_url, $requestParamList);
+		$responseParamList = callNewAPI($check_status_url, $requestParamList);
 		if($responseParamList['STATUS']=='TXN_SUCCESS' && $responseParamList['TXNAMOUNT']==$_POST['TXNAMOUNT'])
 		{
 			global $insert_id;
