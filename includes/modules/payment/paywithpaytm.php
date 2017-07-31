@@ -177,7 +177,7 @@ require(dirname(__FILE__) . DIRECTORY_SEPARATOR . '../../encdec_paytm.php');
 			zen_db_perform(TABLE_ORDERS_STATUS_HISTORY, $sql_data_array);
 		}
 		else{
-			zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, 'error_message=' . urlencode("Security error...!"), 'SSL', true, false));
+			zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, 'error_message=' . urlencode("It seems some issue in server to server communication. Kindly connect with administrator."), 'SSL', true, false));
 		}
     }
 
