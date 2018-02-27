@@ -21,3 +21,12 @@ Installation and Configuration
 - After module Installation, configure it.
 - You should select the Transaction mode, enter paytm Merchant id, Merchant key, website in the listed parameters on configuration tab.
 - Then click on Update.
+
+# Paytm PG URL Details
+	staging	
+		Transaction URL             => https://securegw-stage.paytm.in/theia/processTransaction
+		Transaction Status Url      => https://securegw-stage.paytm.in/merchant-status/getTxnStatus
+
+	Production
+		Transaction URL             => https://securegw.paytm.in/theia/processTransaction
+		Transaction Status Url      => https://securegw.paytm.in/merchant-status/getTxnStatus
