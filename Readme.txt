@@ -11,7 +11,7 @@ Installation and Configuration
 
 - Copy the files as per the directory structure in the module.
 
-1) encdec_paytm-: Put this file under "includes" directory.
+1) encdec_paytm, paytm_version.txt-: Put this file under "includes" directory.
 2) paywithpaytm-: put this file under "includes/modules/payment" directory.
 3) paywithpaytm(language file)-: put this file under "includes/languages/english/modules/payment"
 
