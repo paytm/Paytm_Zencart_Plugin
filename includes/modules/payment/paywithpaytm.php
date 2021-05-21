@@ -211,6 +211,10 @@ require(dirname(__FILE__) . DIRECTORY_SEPARATOR . '/paytmlib/PaytmHelper.php');
                         "merchant": {
                             "redirect": true
                         },
+                        "integration": {
+                            "platform": "'.PROJECT_VERSION_NAME.'",
+                            "version": "'.PROJECT_VERSION_MAJOR.'.'.PROJECT_VERSION_MINOR.'|'.PaytmConstants::PLUGIN_VERSION.'"
+                        },
                         "handler": {
                             
                             "notifyMerchant": function (eventName, data) {
