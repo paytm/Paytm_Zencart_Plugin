@@ -4,7 +4,7 @@ require(dirname(__FILE__) . DIRECTORY_SEPARATOR . '/paytmlib/PaytmHelper.php');
 	
   class paywithpaytm{
     var $code, $title, $description, $enabled;
-
+    public $sort_order,$init_txn_url,$paytmurl,$order_status;
 // class constructor
     function __construct() {
       global $order;
@@ -22,9 +22,8 @@ require(dirname(__FILE__) . DIRECTORY_SEPARATOR . '/paytmlib/PaytmHelper.php');
 		  }
 	  }
 
-      $this->sort_order = MODULE_PAYMENT_PAYTM_SORT_ORDER;
+      $this->sort_order = defined('MODULE_PAYMENT_PAYTM_SORT_ORDER') ? MODULE_PAYMENT_PAYTM_SORT_ORDER : null;
       $this->enabled = ((MODULE_PAYMENT_PAYTM_STATUS == 'True') ? true : false);
-
       if ((int)MODULE_PAYMENT_PAYTM_ORDER_STATUS_ID > 0) {
         $this->order_status = MODULE_PAYMENT_PAYTM_ORDER_STATUS_ID;
       }
@@ -34,7 +33,7 @@ require(dirname(__FILE__) . DIRECTORY_SEPARATOR . '/paytmlib/PaytmHelper.php');
 			if($mod == "Test"){
 				$this->paytmurl = PaytmConstants::STAGING_HOST;
 				$this->init_txn_url = PaytmConstants::TRANSACTION_INIT_URL_STAGING;
-				//$this->init_txn_status = "https://securegw-stage.paytm.in/"; PRODUCTION_HOST   STAGING_HOST
+				//$this->init_txn_status = "https://securestage.paytmpayments.com/"; PRODUCTION_HOST   STAGING_HOST
 			}else{
 				$this->paytmurl = PaytmConstants::PRODUCTION_HOST;
 				$this->init_txn_url = PaytmConstants::TRANSACTION_INIT_URL_PRODUCTION;
